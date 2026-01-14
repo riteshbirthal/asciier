@@ -9,6 +9,7 @@ function VideoUpload({ onVideoProcessed }) {
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
   const [videoId, setVideoId] = useState(null);
+  const [width, setWidth] = useState(150);
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
@@ -31,6 +32,7 @@ function VideoUpload({ onVideoProcessed }) {
 
     const formData = new FormData();
     formData.append('video', selectedFile);
+    formData.append('width', width);
 
     try {
       setUploading(true);
@@ -107,6 +109,30 @@ function VideoUpload({ onVideoProcessed }) {
         )}
       </div>
 
+      <div style={{ marginTop: '20px' }}>
+        <label htmlFor="width-slider-video" style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold' }}>
+          ASCII Width: {width} characters
+        </label>
+        <input
+          id="width-slider-video"
+          type="range"
+          min="60"
+          max="240"
+          value={width}
+          onChange={(e) => setWidth(parseInt(e.target.value))}
+          style={{ width: '100%' }}
+          disabled={uploading || processing}
+        />
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#666' }}>
+          <span>Faster (60)</span>
+          <span>Balanced (150)</span>
+          <span>High Detail (240)</span>
+        </div>
+        <div style={{ marginTop: '8px', fontSize: '13px', color: '#666', fontStyle: 'italic' }}>
+          💡 Higher width = more detail but slower processing. 150 is optimized for HD screens.
+        </div>
+      </div>
+
       <div className="actions">
         <button 
           onClick={handleUpload}
@@ -133,7 +159,8 @@ function VideoUpload({ onVideoProcessed }) {
       <div style={{ marginTop: '30px', fontSize: '14px', color: '#666' }}>
         <strong>Supported formats:</strong> MP4, AVI, MOV, MKV, WebM<br/>
         <strong>Max file size:</strong> 100MB<br/>
-        <strong>Note:</strong> Processing time depends on video length and quality.
+        <strong>Processing time:</strong> Depends on video length, quality, and ASCII width<br/>
+        <strong>Tip:</strong> Start with 150 width for best balance of quality and speed
       </div>
     </div>
   );

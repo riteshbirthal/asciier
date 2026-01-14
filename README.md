@@ -3,9 +3,11 @@
 A full-stack web application that converts regular videos into ASCII art videos while preserving the original audio.
 
 ## Features
-- **Video to ASCII**: Upload video files (MP4, AVI, MOV, MKV) and convert to ASCII art
-- **Image to ASCII**: Upload images (JPEG, PNG, GIF, BMP, WebP) with adjustable detail
+- **Video to ASCII**: Upload video files (MP4, AVI, MOV, MKV) with adjustable width (60-240 characters)
+- **Image to ASCII**: Upload images (JPEG, PNG, GIF, BMP, WebP) with adjustable detail (40-200 characters)
 - **Audio Preservation**: Original audio maintained in converted videos
+- **HD Optimized**: Smart font sizing optimized for HD and 4K displays
+- **Adjustable Quality**: Control processing speed vs. detail with width slider
 - **Real-time Progress**: Live status updates during processing
 - **Download Support**: Download converted files
 - **Smart Cleanup**: Automatic file deletion after 60 minutes or on session end

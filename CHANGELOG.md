@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2026-01-14
+
+### Added
+- **Adjustable ASCII width for videos** (60-240 characters)
+  - Width slider in video upload UI
+  - Default optimized for HD screens (150 characters)
+  - Processing time scales with width selection
+  - Labels: Faster (60), Balanced (150), High Detail (240)
+- **Smart font sizing** in ASCII converter
+  - Dynamic font size based on target resolution
+  - Optimized for HD displays (1920x1080)
+  - Better character spacing (letter-spacing: 0)
+  - Improved font family (Consolas, Courier New)
+  - Font size range: 6px-30px automatically calculated
+
+### Changed
+- ASCII converter default width changed from 420 to 150 characters
+- Output resolution now targets minimum HD (1920x1080)
+- Character height spacing reduced from 1.2x to 1.15x for better fit
+- Video processing logs now include width parameter
+- Improved SVG text rendering with proper XML escaping
+
+### Fixed
+- ASCII output now scales properly to screen resolution
+- Better clarity on HD and 4K displays
+
 ## [1.2.0] - 2026-01-14
 
 ### Added

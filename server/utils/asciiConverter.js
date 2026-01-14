@@ -2,7 +2,7 @@ const sharp = require('sharp');
 
 const ASCII_CHARS = ['@', '#', 'S', '%', '?', '*', '+', ';', ':', ',', '.', ' '];
 
-async function imageToAscii(imagePath, outputPath, width = 120) {
+async function imageToAscii(imagePath, outputPath, width = 150) {
   try {
     const image = sharp(imagePath);
     const metadata = await image.metadata();
@@ -29,9 +29,12 @@ async function imageToAscii(imagePath, outputPath, width = 120) {
       asciiArt += '\n';
     }
 
-    const canvas = await createAsciiImage(asciiArt, info.width, info.height);
+    const targetWidth = Math.max(metadata.width, 1920);
+    const targetHeight = Math.max(metadata.height, 1080);
+
+    const canvas = await createAsciiImage(asciiArt, info.width, info.height, targetWidth, targetHeight);
     await sharp(canvas)
-      .resize(metadata.width, metadata.height, { fit: 'fill' })
+      .resize(targetWidth, targetHeight, { fit: 'fill' })
       .toFile(outputPath);
 
     return outputPath;
@@ -40,10 +43,12 @@ async function imageToAscii(imagePath, outputPath, width = 120) {
   }
 }
 
-async function createAsciiImage(asciiText, charWidth, charHeight) {
-  const fontSize = 10;
+async function createAsciiImage(asciiText, charWidth, charHeight, targetWidth = 1920, targetHeight = 1080) {
+  const pixelsPerChar = targetWidth / charWidth;
+  const fontSize = Math.max(6, Math.min(30, pixelsPerChar * 0.85));
+  
   const charWidthPx = fontSize * 0.6;
-  const charHeightPx = fontSize * 1.2;
+  const charHeightPx = fontSize * 1.15;
   
   const canvasWidth = Math.ceil(charWidth * charWidthPx);
   const canvasHeight = Math.ceil(charHeight * charHeightPx);
@@ -51,9 +56,9 @@ async function createAsciiImage(asciiText, charWidth, charHeight) {
   const svg = `
     <svg width="${canvasWidth}" height="${canvasHeight}" xmlns="http://www.w3.org/2000/svg">
       <rect width="100%" height="100%" fill="black"/>
-      <text x="0" y="${fontSize}" font-family="monospace" font-size="${fontSize}" fill="white" xml:space="preserve">
+      <text x="0" y="${fontSize}" font-family="Consolas, 'Courier New', monospace" font-size="${fontSize}" fill="white" xml:space="preserve" letter-spacing="0">
         ${asciiText.split('\n').map((line, i) => 
-          `<tspan x="0" dy="${i === 0 ? 0 : charHeightPx}">${line}</tspan>`
+          `<tspan x="0" dy="${i === 0 ? 0 : charHeightPx}">${line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</tspan>`
         ).join('')}
       </text>
     </svg>

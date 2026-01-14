@@ -44,6 +44,7 @@ router.post('/upload', upload.single('video'), async (req, res) => {
     const inputPath = req.file.path;
     const outputPath = path.join(__dirname, '../../outputs', `${videoId}.mp4`);
     const sessionId = req.sessionId;
+    const width = parseInt(req.body.width) || 150;
 
     fileCleanupManager.trackFile(inputPath, sessionId, 60);
 
@@ -51,10 +52,11 @@ router.post('/upload', upload.single('video'), async (req, res) => {
       message: 'Video uploaded successfully',
       videoId,
       filename: req.file.filename,
-      sessionId
+      sessionId,
+      width
     });
 
-    processVideo(inputPath, outputPath, videoId, sessionId).then(() => {
+    processVideo(inputPath, outputPath, videoId, sessionId, width).then(() => {
       fileCleanupManager.trackFile(outputPath, sessionId, 60);
     }).catch(err => {
       console.error('Video processing error:', err);

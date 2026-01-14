@@ -60,12 +60,26 @@ npm run client
 
 ## Testing
 
+### Video Conversion
 1. Open http://localhost:3000
-2. Click "Choose Video File"
-3. Select a video (recommended: small video < 10MB for testing)
-4. Click "Convert to ASCII"
-5. Wait for processing (may take 1-5 minutes depending on video length)
-6. View or download the ASCII video
+2. Ensure "📹 Video Mode" is selected
+3. Click "Choose Video File"
+4. Select a video (recommended: small video < 10MB for testing)
+5. Adjust ASCII Width slider (default: 150 for best balance)
+   - 60-100: Faster processing, lower detail
+   - 150: Balanced (recommended for HD screens)
+   - 200-240: High detail, slower processing
+6. Click "Convert to ASCII"
+7. Wait for processing (1-5 minutes depending on video length and width)
+8. View or download the ASCII video
+
+### Image Conversion
+1. Switch to "🖼️ Image Mode"
+2. Click "Choose Image File"
+3. Select an image
+4. Adjust ASCII Width slider (default: 120)
+5. Click "Convert to ASCII"
+6. View side-by-side comparison and download
 
 ## Troubleshooting
 
