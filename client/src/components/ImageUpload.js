@@ -7,7 +7,7 @@ function ImageUpload({ onImageConverted }) {
   const [preview, setPreview] = useState(null);
   const [converting, setConverting] = useState(false);
   const [error, setError] = useState('');
-  const [width, setWidth] = useState(120);
+  const [width, setWidth] = useState(240);
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
@@ -92,14 +92,14 @@ function ImageUpload({ onImageConverted }) {
           id="width-slider"
           type="range"
           min="40"
-          max="200"
+          max="420"
           value={width}
           onChange={(e) => setWidth(parseInt(e.target.value))}
           style={{ width: '100%' }}
         />
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#666' }}>
           <span>Low Detail (40)</span>
-          <span>High Detail (200)</span>
+          <span>High Detail (420)</span>
         </div>
       </div>
 
