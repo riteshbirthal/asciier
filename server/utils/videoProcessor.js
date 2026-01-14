@@ -48,50 +48,108 @@ async function processVideo(inputPath, outputPath, videoId) {
 
 function extractAudio(inputPath, outputPath) {
   return new Promise((resolve, reject) => {
-    ffmpeg(inputPath)
-      .noVideo()
-      .audioCodec('libmp3lame')
-      .toFormat('mp3')
-      .on('end', () => resolve())
-      .on('error', (err) => {
-        console.warn('Audio extraction failed, video may not have audio:', err.message);
-        resolve();
-      })
-      .save(outputPath);
+    ffmpeg.ffprobe(inputPath, (err, metadata) => {
+      if (err) {
+        console.warn('FFprobe failed:', err.message);
+        return resolve();
+      }
+
+      const hasAudio = metadata.streams.some(stream => stream.codec_type === 'audio');
+      
+      if (!hasAudio) {
+        console.log('No audio stream found in input video');
+        return resolve();
+      }
+
+      console.log('Extracting audio...');
+      ffmpeg(inputPath)
+        .noVideo()
+        .audioCodec('libmp3lame')
+        .audioBitrate('128k')
+        .toFormat('mp3')
+        .on('end', () => {
+          console.log('Audio extraction completed');
+          resolve();
+        })
+        .on('error', (err) => {
+          console.warn('Audio extraction failed:', err.message);
+          resolve();
+        })
+        .save(outputPath);
+    });
   });
 }
 
 function extractFrames(inputPath, framesDir) {
   return new Promise((resolve, reject) => {
+    console.log('Extracting frames...');
     ffmpeg(inputPath)
-      .fps(10)
-      .on('end', () => resolve())
-      .on('error', reject)
+      .outputOptions([
+        '-vf fps=10'
+      ])
+      .on('end', () => {
+        console.log('Frame extraction completed');
+        resolve();
+      })
+      .on('error', (err) => {
+        console.error('Frame extraction error:', err.message);
+        reject(err);
+      })
       .save(path.join(framesDir, 'frame_%04d.png'));
   });
 }
 
 function createVideoFromFrames(framesDir, audioPath, outputPath, originalVideo) {
   return new Promise((resolve, reject) => {
+    const hasAudio = fs.existsSync(audioPath) && fs.statSync(audioPath).size > 0;
+    
+    console.log(`Creating video from frames... Audio available: ${hasAudio}`);
+    
     const command = ffmpeg()
       .input(path.join(framesDir, 'frame_%04d.png'))
       .inputFPS(10)
       .videoCodec('libx264')
+      .fps(10)
+      .size('?x?')
       .outputOptions([
         '-pix_fmt yuv420p',
-        '-preset fast',
-        '-crf 23'
+        '-preset medium',
+        '-crf 23',
+        '-movflags +faststart',
+        '-profile:v baseline',
+        '-level 3.0'
       ]);
 
-    if (fs.existsSync(audioPath)) {
-      command.input(audioPath)
+    if (hasAudio) {
+      command
+        .input(audioPath)
         .audioCodec('aac')
-        .audioBitrate('128k');
+        .audioBitrate('128k')
+        .audioChannels(2)
+        .audioFrequency(44100);
+    } else {
+      console.log('No audio track found, creating video without audio');
     }
 
     command
-      .on('end', () => resolve())
-      .on('error', reject)
+      .toFormat('mp4')
+      .on('start', (commandLine) => {
+        console.log('FFmpeg command:', commandLine);
+      })
+      .on('progress', (progress) => {
+        if (progress.percent) {
+          console.log(`Processing: ${Math.floor(progress.percent)}% done`);
+        }
+      })
+      .on('end', () => {
+        console.log('Video creation completed');
+        resolve();
+      })
+      .on('error', (err, stdout, stderr) => {
+        console.error('FFmpeg error:', err.message);
+        console.error('FFmpeg stderr:', stderr);
+        reject(err);
+      })
       .save(outputPath);
   });
 }

@@ -73,6 +73,29 @@ npm run client
 - Ensure FFmpeg is installed and added to PATH
 - Restart your terminal/IDE after adding to PATH
 - Test: `ffmpeg -version`
+- **Important**: FFmpeg must support libx264, libmp3lame, and aac codecs
+- Test codecs: `ffmpeg -codecs | grep -E "libx264|libmp3lame|aac"`
+
+### Video not playing in browser / "No video with supported format"
+This has been fixed! The updated video processor includes:
+- Proper MP4 container format
+- H.264 baseline profile for maximum compatibility
+- AAC audio codec (stereo, 44.1kHz)
+- `-movflags +faststart` for web streaming
+- Proper FPS settings
+
+If you still have issues:
+1. Check server console logs for FFmpeg errors
+2. Verify FFmpeg version: `ffmpeg -version` (should be 4.0+)
+3. Test FFmpeg codecs: `ffmpeg -codecs | grep h264`
+4. Try re-uploading the video
+5. Ensure original video is not corrupted
+
+### Audio not playing
+- The processor now checks if audio stream exists before extraction
+- Check server logs for "Audio available: true" message
+- If original video has no audio, output will be video-only
+- Supported audio formats: MP3, AAC, WAV in source video
 
 ### Port already in use
 - Change PORT in `.env` file (create from `.env.example`)
@@ -81,6 +104,12 @@ npm run client
 ### Out of memory
 - Reduce video size or length
 - Increase Node.js memory: `NODE_OPTIONS=--max-old-space-size=4096 npm run server`
+- For large videos, consider reducing ASCII width in code
+
+### Processing takes too long
+- Default FPS is 10 (adjustable in `server/utils/videoProcessor.js`)
+- Lower FPS = faster processing but choppier video
+- Recommended: Keep videos under 30 seconds for testing
 
 ## Project Structure
 
