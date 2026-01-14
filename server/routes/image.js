@@ -49,7 +49,18 @@ router.post('/upload', upload.single('image'), async (req, res) => {
 
     fileCleanupManager.trackFile(outputPath, 30);
 
-    fs.unlinkSync(inputPath);
+    // Delete input file asynchronously with delay to avoid Windows file lock issues
+    setTimeout(() => {
+      fs.unlink(inputPath, (err) => {
+        if (err) {
+          console.warn(`Could not delete input file ${inputPath}:`, err.message);
+          // Track for cleanup if immediate delete fails
+          fileCleanupManager.trackFile(inputPath, 5);
+        } else {
+          console.log(`Deleted input file: ${path.basename(inputPath)}`);
+        }
+      });
+    }, 1000);
 
     res.json({
       message: 'Image converted successfully',
@@ -59,6 +70,16 @@ router.post('/upload', upload.single('image'), async (req, res) => {
 
   } catch (error) {
     console.error('Image conversion error:', error);
+    
+    // Clean up input file on error
+    if (req.file && req.file.path) {
+      setTimeout(() => {
+        fs.unlink(req.file.path, (err) => {
+          if (err) console.warn('Could not delete file on error:', err.message);
+        });
+      }, 1000);
+    }
+    
     res.status(500).json({ error: error.message });
   }
 });

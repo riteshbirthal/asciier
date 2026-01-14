@@ -3,14 +3,18 @@ const sharp = require('sharp');
 const ASCII_CHARS = ['@', '#', 'S', '%', '?', '*', '+', ';', ':', ',', '.', ' '];
 
 async function imageToAscii(imagePath, outputPath, width = 150) {
+  let sharpInstance = null;
+  
   try {
-    const image = sharp(imagePath);
-    const metadata = await image.metadata();
+    // Create Sharp instance and get metadata
+    sharpInstance = sharp(imagePath);
+    const metadata = await sharpInstance.metadata();
     
     const aspectRatio = metadata.height / metadata.width;
     const height = Math.floor(width * aspectRatio * 0.55);
 
-    const resized = await image
+    // Process image with a fresh Sharp instance to avoid file handle issues
+    const resized = await sharp(imagePath)
       .resize(width, height, { fit: 'fill' })
       .greyscale()
       .raw()
@@ -33,12 +37,23 @@ async function imageToAscii(imagePath, outputPath, width = 150) {
     const targetHeight = Math.max(metadata.height, 1080);
 
     const canvas = await createAsciiImage(asciiArt, info.width, info.height, targetWidth, targetHeight);
+    
+    // Use fresh Sharp instance for output
     await sharp(canvas)
       .resize(targetWidth, targetHeight, { fit: 'fill' })
       .toFile(outputPath);
 
+    // Explicitly destroy Sharp instance to release resources
+    if (sharpInstance) {
+      sharpInstance.destroy();
+    }
+
     return outputPath;
   } catch (error) {
+    // Clean up on error
+    if (sharpInstance) {
+      sharpInstance.destroy();
+    }
     throw new Error(`ASCII conversion failed: ${error.message}`);
   }
 }
