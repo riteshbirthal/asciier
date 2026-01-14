@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const { imageToAscii } = require('./asciiConverter');
 
-async function processVideo(inputPath, outputPath, videoId) {
+async function processVideo(inputPath, outputPath, videoId, sessionId = null) {
   const tempDir = path.join(__dirname, '../../uploads', `temp_${videoId}`);
   const framesDir = path.join(tempDir, 'frames');
   const asciiFramesDir = path.join(tempDir, 'ascii_frames');
@@ -13,7 +13,7 @@ async function processVideo(inputPath, outputPath, videoId) {
     fs.mkdirSync(framesDir, { recursive: true });
     fs.mkdirSync(asciiFramesDir, { recursive: true });
 
-    console.log(`Processing video: ${videoId}`);
+    console.log(`Processing video: ${videoId} (session: ${sessionId || 'none'})`);
 
     await extractAudio(inputPath, audioPath);
     await extractFrames(inputPath, framesDir);
@@ -110,7 +110,6 @@ function createVideoFromFrames(framesDir, audioPath, outputPath, originalVideo) 
       .inputFPS(10)
       .videoCodec('libx264')
       .fps(10)
-      .size('?x?')
       .outputOptions([
         '-pix_fmt yuv420p',
         '-preset medium',

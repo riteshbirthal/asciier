@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { getSessionHeaders, extractSessionId } from '../utils/sessionManager';
 
 function VideoUpload({ onVideoProcessed }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -38,9 +39,12 @@ function VideoUpload({ onVideoProcessed }) {
 
       const response = await axios.post('/api/video/upload', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          ...getSessionHeaders()
         }
       });
+
+      extractSessionId(response);
 
       const { videoId } = response.data;
       setVideoId(videoId);
@@ -60,7 +64,9 @@ function VideoUpload({ onVideoProcessed }) {
   const pollVideoStatus = async (id) => {
     const interval = setInterval(async () => {
       try {
-        const response = await axios.get(`/api/video/status/${id}`);
+        const response = await axios.get(`/api/video/status/${id}`, {
+          headers: getSessionHeaders()
+        });
         
         if (response.data.status === 'completed') {
           clearInterval(interval);

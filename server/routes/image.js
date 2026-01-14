@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const { imageToAscii } = require('../utils/asciiConverter');
+const fileCleanupManager = require('../utils/fileCleanup');
 
 const router = express.Router();
 
@@ -43,15 +44,19 @@ router.post('/upload', upload.single('image'), async (req, res) => {
     const inputPath = req.file.path;
     const outputPath = path.join(__dirname, '../../outputs', `${imageId}.png`);
     const width = parseInt(req.body.width) || 120;
+    const sessionId = req.sessionId;
 
     await imageToAscii(inputPath, outputPath, width);
+
+    fileCleanupManager.trackFile(outputPath, sessionId, 60);
 
     fs.unlinkSync(inputPath);
 
     res.json({
       message: 'Image converted successfully',
       imageId,
-      imageUrl: `/outputs/${imageId}.png`
+      imageUrl: `/outputs/${imageId}.png`,
+      sessionId
     });
 
   } catch (error) {

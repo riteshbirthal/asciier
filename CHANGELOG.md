@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-01-14
+
+### Added
+- **Automatic file cleanup system**
+  - Time-based deletion: Files auto-delete after 60 minutes
+  - Session-based cleanup: Files deleted when user closes browser/connection
+  - Background scheduler runs every 60 seconds
+  - Inactivity timeout: Sessions expire after 10 minutes of inactivity
+- Session management middleware for tracking user sessions
+- File tracking system with expiry times and session association
+- Cleanup status API endpoint (`/api/cleanup/status`)
+- Comprehensive FILE_CLEANUP.md documentation
+- Session ID management in frontend with sessionStorage
+
+### Changed
+- Video and image routes now track files with cleanup manager
+- Added session ID support across all API endpoints
+- Enhanced CORS configuration to expose session headers
+- Graceful shutdown handling for cleanup scheduler
+
 ## [1.1.0] - 2026-01-14
 
 ### Added

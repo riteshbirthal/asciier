@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const { processVideo } = require('../utils/videoProcessor');
+const fileCleanupManager = require('../utils/fileCleanup');
 
 const router = express.Router();
 
@@ -42,14 +43,20 @@ router.post('/upload', upload.single('video'), async (req, res) => {
     const videoId = uuidv4();
     const inputPath = req.file.path;
     const outputPath = path.join(__dirname, '../../outputs', `${videoId}.mp4`);
+    const sessionId = req.sessionId;
+
+    fileCleanupManager.trackFile(inputPath, sessionId, 60);
 
     res.json({
       message: 'Video uploaded successfully',
       videoId,
-      filename: req.file.filename
+      filename: req.file.filename,
+      sessionId
     });
 
-    processVideo(inputPath, outputPath, videoId).catch(err => {
+    processVideo(inputPath, outputPath, videoId, sessionId).then(() => {
+      fileCleanupManager.trackFile(outputPath, sessionId, 60);
+    }).catch(err => {
       console.error('Video processing error:', err);
     });
 
