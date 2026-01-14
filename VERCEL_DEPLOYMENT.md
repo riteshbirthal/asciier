@@ -18,16 +18,32 @@ git push origin main
 
 ### Step 3: Configure Project Settings
 
-**Framework Preset:** Other (or Create React App)
+**IMPORTANT:** Choose ONE of these methods:
 
-**Root Directory:** Leave empty (use root)
+#### Method A: Use Root Directory (Recommended)
+
+**Framework Preset:** Create React App
+
+**Root Directory:** `client`
 
 **Build & Development Settings:**
-
 ```
-Build Command: cd client && npm install && npm run build
+Build Command: npm run build (or leave empty - auto-detected)
+Output Directory: build (or leave empty - auto-detected)  
+Install Command: npm install (or leave empty - auto-detected)
+```
+
+#### Method B: Build from Root (Alternative)
+
+**Framework Preset:** Other
+
+**Root Directory:** Leave empty
+
+**Build & Development Settings:**
+```
+Build Command: cd client && npm ci && npm run build
 Output Directory: client/build
-Install Command: npm install --prefix client
+Install Command: Leave empty (handled by buildCommand)
 ```
 
 ### Step 4: Environment Variables
