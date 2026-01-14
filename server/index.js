@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const videoRoutes = require('./routes/video');
+const imageRoutes = require('./routes/image');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,6 +24,7 @@ if (!fs.existsSync(outputsDir)) {
 }
 
 app.use('/api/video', videoRoutes);
+app.use('/api/image', imageRoutes);
 
 app.use('/uploads', express.static(uploadsDir));
 app.use('/outputs', express.static(outputsDir));
