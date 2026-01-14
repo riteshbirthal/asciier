@@ -1,8 +1,9 @@
 import React from 'react';
+import API_URL from '../config';
 
 function ImageViewer({ asciiImageUrl, originalImageUrl, imageId, onReset }) {
   const handleDownload = () => {
-    window.location.href = `http://localhost:5000/api/image/download/${imageId}`;
+    window.location.href = `${API_URL}/api/image/download/${imageId}`;
   };
 
   return (

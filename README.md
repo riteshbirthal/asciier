@@ -14,20 +14,39 @@ A full-stack web application that converts regular videos into ASCII art videos 
 - **Extended Timeouts**: 10-minute timeout support for long video processing
 
 ## Tech Stack
-- **Frontend**: React
-- **Backend**: Node.js + Express
+- **Frontend**: React (Deploy on Vercel)
+- **Backend**: Node.js + Express (Deploy on Render)
 - **Video Processing**: FFmpeg
 - **Image Processing**: Sharp
 
-## Installation
+## Deployment Architecture
+
+```
+Vercel (Frontend)  ←→  Render (Backend + FFmpeg)
+   React App              Express API
+   HTTPS                  Video Processing
+```
+
+## Local Development
 
 ```bash
 # Install all dependencies
 npm run install-all
 
-# Run development servers
+# Run development servers (both frontend and backend)
 npm run dev
 ```
+
+## Production Deployment
+
+See [DEPLOY_VERCEL_RENDER.md](DEPLOY_VERCEL_RENDER.md) for complete deployment instructions.
+
+**Quick Deploy:**
+- **Frontend**: Vercel (automatic from GitHub)
+- **Backend**: Render (automatic from GitHub)
+- **Cost**: Free tier or $7/month for production
+
+Detailed guide: [DEPLOY_VERCEL_RENDER.md](DEPLOY_VERCEL_RENDER.md)
 
 ## Usage
 1. Open http://localhost:3000

@@ -1,8 +1,9 @@
 import React from 'react';
+import API_URL from '../config';
 
 function VideoPlayer({ videoUrl, videoId, onReset }) {
   const handleDownload = () => {
-    window.location.href = `http://localhost:5000/api/video/download/${videoId}`;
+    window.location.href = `${API_URL}/api/video/download/${videoId}`;
   };
 
   return (

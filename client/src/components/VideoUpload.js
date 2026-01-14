@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import API_URL from '../config';
 
 function VideoUpload({ onVideoProcessed }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -38,7 +39,7 @@ function VideoUpload({ onVideoProcessed }) {
       setError('');
       setStatus('Uploading video...');
 
-      const response = await axios.post('/api/video/upload', formData, {
+      const response = await axios.post(`${API_URL}/api/video/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
@@ -63,7 +64,7 @@ function VideoUpload({ onVideoProcessed }) {
   const pollVideoStatus = async (id) => {
     const interval = setInterval(async () => {
       try {
-        const response = await axios.get(`/api/video/status/${id}`, {
+        const response = await axios.get(`${API_URL}/api/video/status/${id}`, {
           timeout: 30000
         });
         
@@ -72,7 +73,7 @@ function VideoUpload({ onVideoProcessed }) {
           setProcessing(false);
           setStatus('Video processed successfully! Download available.');
           setTimeout(() => {
-            onVideoProcessed(`http://localhost:5000${response.data.videoUrl}`, id);
+            onVideoProcessed(`${API_URL}${response.data.videoUrl}`, id);
           }, 1000);
         } else if (response.data.status === 'error') {
           clearInterval(interval);

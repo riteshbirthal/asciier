@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2026-01-14
+
+### Added
+- **Split deployment architecture** - Frontend (Vercel) + Backend (Render)
+- **Environment variable configuration** for API URL
+- **CORS configuration** with FRONTEND_URL environment variable
+- **API configuration module** (`client/src/config.js`)
+- Deployment files:
+  - `render.yaml` - Render backend configuration
+  - `vercel.json` - Vercel frontend configuration
+  - `.env.example` - Environment variables template
+  - `DEPLOY_VERCEL_RENDER.md` - Complete deployment guide
+- Environment files:
+  - `client/.env.development` - Local development API URL
+  - `client/.env.production` - Production API URL template
+
+### Changed
+- Frontend now uses environment variables for all API calls
+- Removed proxy configuration from `client/package.json`
+- All components updated to import and use `API_URL` from config
+- CORS now accepts specific origin from environment variable
+- Backend configuration updated for cross-origin requests
+
+### Deployment
+- **Frontend**: Deploy to Vercel
+- **Backend**: Deploy to Render with FFmpeg and persistent disk
+- **Cost**: Free tier available, $7/month recommended for production
+
 ## [1.4.0] - 2026-01-14
 
 ### Removed

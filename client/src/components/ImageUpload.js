@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import API_URL from '../config';
 
 function ImageUpload({ onImageConverted }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -36,7 +37,7 @@ function ImageUpload({ onImageConverted }) {
       setConverting(true);
       setError('');
 
-      const response = await axios.post('/api/image/upload', formData, {
+      const response = await axios.post(`${API_URL}/api/image/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
@@ -45,7 +46,7 @@ function ImageUpload({ onImageConverted }) {
 
       const { imageId, imageUrl } = response.data;
       setConverting(false);
-      onImageConverted(`http://localhost:5000${imageUrl}`, imageId, preview);
+      onImageConverted(`${API_URL}${imageUrl}`, imageId, preview);
 
     } catch (err) {
       setError(err.response?.data?.error || 'Conversion failed');

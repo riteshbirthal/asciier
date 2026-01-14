@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: asciier-backend
+    env: node
+    region: oregon
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm run server
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: FRONTEND_URL
+        sync: false
+    disk:
+      name: asciier-storage
+      mountPath: /opt/render/project/src
+      sizeGB: 10
