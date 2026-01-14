@@ -3,7 +3,7 @@ services:
     name: asciier-backend
     env: node
     region: oregon
-    plan: starter
+    plan: free
     buildCommand: npm install
     startCommand: npm run server
     envVars:
@@ -13,7 +13,5 @@ services:
         value: 5000
       - key: FRONTEND_URL
         sync: false
-    disk:
-      name: asciier-storage
-      mountPath: /opt/render/project/src
-      sizeGB: 10
+    # Disk storage not available on free tier
+    # Files stored in ephemeral storage (wiped on restart)

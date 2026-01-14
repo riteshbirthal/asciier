@@ -39,14 +39,27 @@ npm run dev
 
 ## Production Deployment
 
+### Free Tier (Testing/Demo)
+**⚠️ Using free tier? Read [FREE_TIER_GUIDE.md](FREE_TIER_GUIDE.md) first!**
+
+Free tier limitations:
+- Render service sleeps after 15 minutes (1-2 min wake-up time)
+- Very slow processing (0.1 CPU)
+- No persistent disk storage
+- Best for images only, videos unreliable
+
+### Paid Tier (Production)
 See [DEPLOY_VERCEL_RENDER.md](DEPLOY_VERCEL_RENDER.md) for complete deployment instructions.
 
 **Quick Deploy:**
-- **Frontend**: Vercel (automatic from GitHub)
-- **Backend**: Render (automatic from GitHub)
-- **Cost**: Free tier or $7/month for production
+- **Frontend**: Vercel Free (perfect, no issues)
+- **Backend**: Render Free ($0) or Starter ($7/month recommended)
+- **Cost**: Free tier for testing, $7/month for production
 
-Detailed guide: [DEPLOY_VERCEL_RENDER.md](DEPLOY_VERCEL_RENDER.md)
+**Guides:**
+- [FREE_TIER_GUIDE.md](FREE_TIER_GUIDE.md) - Using free tier (with limitations)
+- [DEPLOY_VERCEL_RENDER.md](DEPLOY_VERCEL_RENDER.md) - Complete deployment guide
+- [DEPLOYMENT_SUMMARY.md](DEPLOYMENT_SUMMARY.md) - Quick reference
 
 ## Usage
 1. Open http://localhost:3000
