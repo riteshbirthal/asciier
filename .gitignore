@@ -1,0 +1,15 @@
+node_modules/
+.env
+dist/
+build/
+uploads/
+outputs/
+*.mp4
+*.avi
+*.mov
+*.mkv
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
