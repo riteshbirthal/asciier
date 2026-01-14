@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { getSessionHeaders, extractSessionId } from '../utils/sessionManager';
 
 function ImageUpload({ onImageConverted }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -39,12 +38,10 @@ function ImageUpload({ onImageConverted }) {
 
       const response = await axios.post('/api/image/upload', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          ...getSessionHeaders()
-        }
+          'Content-Type': 'multipart/form-data'
+        },
+        timeout: 120000
       });
-
-      extractSessionId(response);
 
       const { imageId, imageUrl } = response.data;
       setConverting(false);

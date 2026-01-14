@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2026-01-14
+
+### Removed
+- **Session management system** - Simplified architecture by removing session tracking
+  - Removed sessionMiddleware and session tracking logic
+  - Removed session ID from all API responses
+  - Removed sessionManager utility from frontend
+  - No more connection close tracking
+
+### Changed
+- **File cleanup simplified to time-based only**
+  - Files now auto-delete after **30 minutes** (was 60 minutes with session)
+  - Removed session-based cleanup (connection close tracking)
+  - Cleaner, more predictable cleanup behavior
+- **Increased timeout settings for long video processing**
+  - Frontend upload timeout: 10 minutes (600s)
+  - Server timeout: 10 minutes (600s)
+  - Keep-alive timeout: 10m 20s
+  - Headers timeout: 10m 30s
+  - Status polling interval increased: 3s → 5s
+- **Processing status tracking improved**
+  - Backend now tracks processing state (processing/completed/error)
+  - Status endpoint returns detailed processing state
+  - Download only available after complete processing
+  - Error status properly handled and displayed
+- **Request body size limit increased**
+  - JSON and URL-encoded body limit: 150MB
+  - Better support for large video uploads
+
+### Fixed
+- Download button now only appears after video + audio processing is fully complete
+- Processing errors now properly displayed to user
+- Status polling more reliable with error handling
+
 ## [1.3.0] - 2026-01-14
 
 ### Added

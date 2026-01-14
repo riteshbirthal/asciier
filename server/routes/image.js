@@ -44,19 +44,17 @@ router.post('/upload', upload.single('image'), async (req, res) => {
     const inputPath = req.file.path;
     const outputPath = path.join(__dirname, '../../outputs', `${imageId}.png`);
     const width = parseInt(req.body.width) || 120;
-    const sessionId = req.sessionId;
 
     await imageToAscii(inputPath, outputPath, width);
 
-    fileCleanupManager.trackFile(outputPath, sessionId, 60);
+    fileCleanupManager.trackFile(outputPath, 30);
 
     fs.unlinkSync(inputPath);
 
     res.json({
       message: 'Image converted successfully',
       imageId,
-      imageUrl: `/outputs/${imageId}.png`,
-      sessionId
+      imageUrl: `/outputs/${imageId}.png`
     });
 
   } catch (error) {

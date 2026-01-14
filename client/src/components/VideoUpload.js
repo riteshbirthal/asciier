@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { getSessionHeaders, extractSessionId } from '../utils/sessionManager';
 
 function VideoUpload({ onVideoProcessed }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -9,7 +8,7 @@ function VideoUpload({ onVideoProcessed }) {
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
   const [videoId, setVideoId] = useState(null);
-  const [width, setWidth] = useState(150);
+  const [width, setWidth] = useState(240);
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
@@ -41,12 +40,10 @@ function VideoUpload({ onVideoProcessed }) {
 
       const response = await axios.post('/api/video/upload', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          ...getSessionHeaders()
-        }
+          'Content-Type': 'multipart/form-data'
+        },
+        timeout: 600000
       });
-
-      extractSessionId(response);
 
       const { videoId } = response.data;
       setVideoId(videoId);
@@ -67,23 +64,27 @@ function VideoUpload({ onVideoProcessed }) {
     const interval = setInterval(async () => {
       try {
         const response = await axios.get(`/api/video/status/${id}`, {
-          headers: getSessionHeaders()
+          timeout: 30000
         });
         
         if (response.data.status === 'completed') {
           clearInterval(interval);
           setProcessing(false);
-          setStatus('Video processed successfully!');
+          setStatus('Video processed successfully! Download available.');
           setTimeout(() => {
             onVideoProcessed(`http://localhost:5000${response.data.videoUrl}`, id);
           }, 1000);
+        } else if (response.data.status === 'error') {
+          clearInterval(interval);
+          setError(response.data.error || 'Processing failed');
+          setProcessing(false);
         }
       } catch (err) {
         clearInterval(interval);
         setError('Failed to check video status');
         setProcessing(false);
       }
-    }, 3000);
+    }, 5000);
   };
 
   return (
@@ -117,7 +118,7 @@ function VideoUpload({ onVideoProcessed }) {
           id="width-slider-video"
           type="range"
           min="60"
-          max="240"
+          max="420"
           value={width}
           onChange={(e) => setWidth(parseInt(e.target.value))}
           style={{ width: '100%' }}
@@ -125,11 +126,11 @@ function VideoUpload({ onVideoProcessed }) {
         />
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#666' }}>
           <span>Faster (60)</span>
-          <span>Balanced (150)</span>
-          <span>High Detail (240)</span>
+          <span>Balanced (240)</span>
+          <span>High Detail (420)</span>
         </div>
         <div style={{ marginTop: '8px', fontSize: '13px', color: '#666', fontStyle: 'italic' }}>
-          💡 Higher width = more detail but slower processing. 150 is optimized for HD screens.
+          💡 Higher width = more detail but slower processing. 240 is optimized for HD screens.
         </div>
       </div>
 

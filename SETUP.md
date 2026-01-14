@@ -123,7 +123,9 @@ If you still have issues:
 ### Processing takes too long
 - Default FPS is 10 (adjustable in `server/utils/videoProcessor.js`)
 - Lower FPS = faster processing but choppier video
+- Server timeout is set to 10 minutes for long videos
 - Recommended: Keep videos under 30 seconds for testing
+- Files auto-delete after 30 minutes of creation
 
 ## Project Structure
 

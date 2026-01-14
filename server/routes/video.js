@@ -8,6 +8,8 @@ const fileCleanupManager = require('../utils/fileCleanup');
 
 const router = express.Router();
 
+const processingStatus = new Map();
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadsDir = path.join(__dirname, '../../uploads');
@@ -43,23 +45,37 @@ router.post('/upload', upload.single('video'), async (req, res) => {
     const videoId = uuidv4();
     const inputPath = req.file.path;
     const outputPath = path.join(__dirname, '../../outputs', `${videoId}.mp4`);
-    const sessionId = req.sessionId;
     const width = parseInt(req.body.width) || 150;
 
-    fileCleanupManager.trackFile(inputPath, sessionId, 60);
+    fileCleanupManager.trackFile(inputPath, 30);
+
+    processingStatus.set(videoId, {
+      status: 'processing',
+      startTime: Date.now(),
+      outputPath
+    });
 
     res.json({
       message: 'Video uploaded successfully',
       videoId,
       filename: req.file.filename,
-      sessionId,
       width
     });
 
-    processVideo(inputPath, outputPath, videoId, sessionId, width).then(() => {
-      fileCleanupManager.trackFile(outputPath, sessionId, 60);
+    processVideo(inputPath, outputPath, videoId, width).then(() => {
+      fileCleanupManager.trackFile(outputPath, 30);
+      processingStatus.set(videoId, {
+        status: 'completed',
+        outputPath,
+        completedAt: Date.now()
+      });
+      console.log(`Video ${videoId} processing completed successfully`);
     }).catch(err => {
       console.error('Video processing error:', err);
+      processingStatus.set(videoId, {
+        status: 'error',
+        error: err.message
+      });
     });
 
   } catch (error) {
@@ -70,15 +86,27 @@ router.post('/upload', upload.single('video'), async (req, res) => {
 
 router.get('/status/:videoId', (req, res) => {
   const { videoId } = req.params;
-  const outputPath = path.join(__dirname, '../../outputs', `${videoId}.mp4`);
+  const status = processingStatus.get(videoId);
   
-  if (fs.existsSync(outputPath)) {
+  if (!status) {
+    return res.json({ status: 'unknown' });
+  }
+
+  if (status.status === 'completed') {
     res.json({
       status: 'completed',
       videoUrl: `/outputs/${videoId}.mp4`
     });
+  } else if (status.status === 'error') {
+    res.json({
+      status: 'error',
+      error: status.error || 'Processing failed'
+    });
   } else {
-    res.json({ status: 'processing' });
+    res.json({
+      status: 'processing',
+      startTime: status.startTime
+    });
   }
 });
 

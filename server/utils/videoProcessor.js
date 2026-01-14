@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const { imageToAscii } = require('./asciiConverter');
 
-async function processVideo(inputPath, outputPath, videoId, sessionId = null, width = 150) {
+async function processVideo(inputPath, outputPath, videoId, width = 150) {
   const tempDir = path.join(__dirname, '../../uploads', `temp_${videoId}`);
   const framesDir = path.join(tempDir, 'frames');
   const asciiFramesDir = path.join(tempDir, 'ascii_frames');
@@ -13,7 +13,7 @@ async function processVideo(inputPath, outputPath, videoId, sessionId = null, wi
     fs.mkdirSync(framesDir, { recursive: true });
     fs.mkdirSync(asciiFramesDir, { recursive: true });
 
-    console.log(`Processing video: ${videoId} (session: ${sessionId || 'none'}, width: ${width})`);
+    console.log(`Processing video: ${videoId} (width: ${width})`);
 
     await extractAudio(inputPath, audioPath);
     await extractFrames(inputPath, framesDir);

@@ -10,8 +10,8 @@ A full-stack web application that converts regular videos into ASCII art videos 
 - **Adjustable Quality**: Control processing speed vs. detail with width slider
 - **Real-time Progress**: Live status updates during processing
 - **Download Support**: Download converted files
-- **Smart Cleanup**: Automatic file deletion after 60 minutes or on session end
-- **Session Management**: Files tracked per user session
+- **Smart Cleanup**: Automatic file deletion after 30 minutes of creation
+- **Extended Timeouts**: 10-minute timeout support for long video processing
 
 ## Tech Stack
 - **Frontend**: React
@@ -41,5 +41,7 @@ npm run dev
 
 ## Documentation
 - [Setup Instructions](SETUP.md) - Installation and configuration guide
-- [File Cleanup System](FILE_CLEANUP.md) - Automatic file management documentation
 - [Changelog](CHANGELOG.md) - Version history and updates
+
+## File Cleanup
+Generated files (images and videos) are automatically deleted **30 minutes** after creation to save disk space. Download your files before they expire!
