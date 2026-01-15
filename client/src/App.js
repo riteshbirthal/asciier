@@ -5,7 +5,7 @@ import ImageUpload from './components/ImageUpload';
 import ImageViewer from './components/ImageViewer';
 
 function App() {
-  const [mode, setMode] = useState('video');
+  const [mode, setMode] = useState('image');
   const [processedVideo, setProcessedVideo] = useState(null);
   const [videoId, setVideoId] = useState(null);
   const [asciiImage, setAsciiImage] = useState(null);
@@ -44,16 +44,16 @@ function App() {
         
         <div className="mode-selector">
           <button 
-            className={`mode-button ${mode === 'video' ? 'active' : ''}`}
-            onClick={() => handleModeChange('video')}
-          >
-            📹 Video Mode
-          </button>
-          <button 
             className={`mode-button ${mode === 'image' ? 'active' : ''}`}
             onClick={() => handleModeChange('image')}
           >
             🖼️ Image Mode
+          </button>
+          <button 
+            className={`mode-button ${mode === 'video' ? 'active' : ''}`}
+            onClick={() => handleModeChange('video')}
+          >
+            📹 Video Mode
           </button>
         </div>
 
