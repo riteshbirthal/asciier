@@ -41,7 +41,7 @@ function ImageUpload({ onImageConverted }) {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
-        timeout: 120000
+        timeout: 600000
       });
 
       const { imageId, imageUrl } = response.data;
