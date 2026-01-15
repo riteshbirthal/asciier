@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Simple Favicon</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-top: 0;
+        }
+        canvas {
+            border: 2px solid #ddd;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 10px 10px 0;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        input, select {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        .preview {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+            align-items: center;
+        }
+        .info {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Generate Simple Favicon</h1>
+        <p>Create a basic favicon for your ASCIIer app. This generates a simple text-based favicon that you can use until you get a better one.</p>
+
+        <div>
+            <label>
+                <strong>Text:</strong><br>
+                <input type="text" id="text" value="ASC" maxlength="3">
+            </label>
+        </div>
+
+        <div>
+            <label>
+                <strong>Background Color:</strong><br>
+                <input type="color" id="bgColor" value="#667eea">
+            </label>
+        </div>
+
+        <div>
+            <label>
+                <strong>Text Color:</strong><br>
+                <input type="color" id="textColor" value="#ffffff">
+            </label>
+        </div>
+
+        <div>
+            <label>
+                <strong>Size:</strong><br>
+                <select id="size">
+                    <option value="32">32x32</option>
+                    <option value="64">64x64</option>
+                    <option value="128">128x128</option>
+                    <option value="192" selected>192x192</option>
+                    <option value="512">512x512</option>
+                </select>
+            </label>
+        </div>
+
+        <button onclick="generateFavicon()">Generate Favicon</button>
+        <button onclick="updatePreview()">Preview</button>
+
+        <div class="preview" id="preview">
+            <div>
+                <strong>Preview:</strong><br>
+                <canvas id="canvas" width="192" height="192"></canvas>
+            </div>
+        </div>
+
+        <div class="info">
+            <strong>📋 Instructions:</strong><br>
+            1. Customize text and colors above<br>
+            2. Click "Preview" to see it<br>
+            3. Click "Generate Favicon" to download<br>
+            4. Generate multiple sizes (32, 192, 512)<br>
+            5. Save them to <code>client/public/</code>:<br>
+            &nbsp;&nbsp;&nbsp;- Save 32x32 as <code>favicon.ico</code> (rename after download)<br>
+            &nbsp;&nbsp;&nbsp;- Save 192x192 as <code>logo192.png</code><br>
+            &nbsp;&nbsp;&nbsp;- Save 512x512 as <code>logo512.png</code>
+        </div>
+
+        <div class="info" style="background: #fff3cd; color: #856404;">
+            <strong>⚠️ Better Option:</strong><br>
+            This generates basic favicons. For professional results, use:<br>
+            <a href="https://favicon.io/emoji-favicons/film-frames/" target="_blank">https://favicon.io/emoji-favicons/film-frames/</a><br>
+            It's faster and looks better! Just download and copy 3 files.
+        </div>
+
+        <div class="success" id="success">
+            ✅ Favicon generated! Click the image to download.<br>
+            Generate all 3 sizes: 32x32, 192x192, and 512x512
+        </div>
+    </div>
+
+    <script>
+        function updatePreview() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const text = document.getElementById('text').value || 'ASC';
+            const bgColor = document.getElementById('bgColor').value;
+            const textColor = document.getElementById('textColor').value;
+            const size = parseInt(document.getElementById('size').value);
+
+            canvas.width = size;
+            canvas.height = size;
+
+            // Background
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, size, size);
+
+            // Text
+            ctx.fillStyle = textColor;
+            ctx.font = `bold ${size * 0.6}px monospace`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, size / 2, size / 2);
+        }
+
+        function generateFavicon() {
+            updatePreview();
+            
+            const canvas = document.getElementById('canvas');
+            const size = document.getElementById('size').value;
+            const filename = size === '192' ? 'logo192.png' : 
+                           size === '512' ? 'logo512.png' : 
+                           `favicon-${size}.png`;
+
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                document.getElementById('success').style.display = 'block';
+            });
+        }
+
+        // Initial preview
+        window.onload = function() {
+            updatePreview();
+        };
+    </script>
+</body>
+</html>
