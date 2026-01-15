@@ -1,4 +1,6 @@
 const sharp = require('sharp');
+const fs = require('fs').promises;
+const path = require('path');
 
 const ASCII_CHARS = ['@', '#', 'S', '%', '?', '*', '+', ';', ':', ',', '.', ' '];
 
@@ -33,8 +35,13 @@ async function imageToAscii(imagePath, outputPath, width = 150) {
       asciiArt += '\n';
     }
 
+    // Save ASCII text to .txt file
+    const txtPath = outputPath.replace('.png', '.txt');
+    await fs.writeFile(txtPath, asciiArt, 'utf8');
+
+    // Fix aspect ratio calculation for image output
     const targetWidth = Math.max(metadata.width, 1920);
-    const targetHeight = Math.max(metadata.height, 1080);
+    const targetHeight = Math.floor(targetWidth * aspectRatio);
 
     const canvas = await createAsciiImage(asciiArt, info.width, info.height, targetWidth, targetHeight);
     

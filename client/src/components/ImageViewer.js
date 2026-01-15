@@ -2,8 +2,12 @@ import React from 'react';
 import API_URL from '../config';
 
 function ImageViewer({ asciiImageUrl, originalImageUrl, imageId, onReset }) {
-  const handleDownload = () => {
-    window.location.href = `${API_URL}/api/image/download/${imageId}`;
+  const handleDownloadImage = () => {
+    window.location.href = `${API_URL}/api/image/download/${imageId}?format=png`;
+  };
+
+  const handleDownloadText = () => {
+    window.location.href = `${API_URL}/api/image/download/${imageId}?format=txt`;
   };
 
   return (
@@ -40,8 +44,11 @@ function ImageViewer({ asciiImageUrl, originalImageUrl, imageId, onReset }) {
       </div>
 
       <div className="actions">
-        <button onClick={handleDownload}>
+        <button onClick={handleDownloadImage}>
           Download ASCII Image
+        </button>
+        <button onClick={handleDownloadText}>
+          Download as Text File
         </button>
         <button onClick={onReset} style={{ background: '#6c757d' }}>
           Convert Another Image

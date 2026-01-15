@@ -48,6 +48,10 @@ router.post('/upload', upload.single('image'), async (req, res) => {
     await imageToAscii(inputPath, outputPath, width);
 
     fileCleanupManager.trackFile(outputPath, 30);
+    
+    // Also track the txt file for cleanup
+    const txtPath = outputPath.replace('.png', '.txt');
+    fileCleanupManager.trackFile(txtPath, 30);
 
     // Delete input file asynchronously with delay to avoid Windows file lock issues
     setTimeout(() => {
@@ -86,12 +90,22 @@ router.post('/upload', upload.single('image'), async (req, res) => {
 
 router.get('/download/:imageId', (req, res) => {
   const { imageId } = req.params;
-  const outputPath = path.join(__dirname, '../../outputs', `${imageId}.png`);
+  const format = req.query.format || 'png';
   
-  if (fs.existsSync(outputPath)) {
-    res.download(outputPath, `ascii_${imageId}.png`);
+  if (format === 'txt') {
+    const txtPath = path.join(__dirname, '../../outputs', `${imageId}.txt`);
+    if (fs.existsSync(txtPath)) {
+      res.download(txtPath, `ascii_${imageId}.txt`);
+    } else {
+      res.status(404).json({ error: 'Text file not found' });
+    }
   } else {
-    res.status(404).json({ error: 'Image not found' });
+    const outputPath = path.join(__dirname, '../../outputs', `${imageId}.png`);
+    if (fs.existsSync(outputPath)) {
+      res.download(outputPath, `ascii_${imageId}.png`);
+    } else {
+      res.status(404).json({ error: 'Image not found' });
+    }
   }
 });
 
