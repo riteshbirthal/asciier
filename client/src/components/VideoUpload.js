@@ -8,7 +8,6 @@ function VideoUpload({ onVideoProcessed }) {
   const [processing, setProcessing] = useState(false);
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
-  const [videoId, setVideoId] = useState(null);
   const [width, setWidth] = useState(240);
 
   const handleFileSelect = (e) => {
@@ -47,7 +46,6 @@ function VideoUpload({ onVideoProcessed }) {
       });
 
       const { videoId } = response.data;
-      setVideoId(videoId);
       setUploading(false);
       setProcessing(true);
       setStatus('Processing video... This may take a few minutes.');
