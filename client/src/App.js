@@ -11,6 +11,7 @@ function App() {
   const [asciiImage, setAsciiImage] = useState(null);
   const [originalImage, setOriginalImage] = useState(null);
   const [imageId, setImageId] = useState(null);
+  const isVideoModeEnabled = process.env.REACT_APP_ENABLE_VIDEO_MODE === 'true';
 
   const handleVideoProcessed = (videoUrl, id) => {
     setProcessedVideo(videoUrl);
@@ -41,6 +42,11 @@ function App() {
       <div className="container">
         <h1>🎬 ASCIIer</h1>
         <p className="subtitle">Transform your media into ASCII art masterpieces</p>
+        <div className="instagram-link">
+          <a href="https://www.instagram.com/art.of.ascii/" target="_blank" rel="noopener noreferrer">
+            ✨ See Examples on Instagram
+          </a>
+        </div>
         
         <div className="mode-selector">
           <button 
@@ -58,14 +64,24 @@ function App() {
         </div>
 
         {mode === 'video' ? (
-          !processedVideo ? (
-            <VideoUpload onVideoProcessed={handleVideoProcessed} />
+          isVideoModeEnabled ? (
+            !processedVideo ? (
+              <VideoUpload onVideoProcessed={handleVideoProcessed} />
+            ) : (
+              <VideoPlayer 
+                videoUrl={processedVideo} 
+                videoId={videoId}
+                onReset={handleReset}
+              />
+            )
           ) : (
-            <VideoPlayer 
-              videoUrl={processedVideo} 
-              videoId={videoId}
-              onReset={handleReset}
-            />
+            <div className="coming-soon">
+              <h2>🎬 Video Mode</h2>
+              <p>Coming Soon</p>
+              <p className="coming-soon-description">
+                We're working hard to bring you ASCII video conversion. Stay tuned!
+              </p>
+            </div>
           )
         ) : (
           !asciiImage ? (
